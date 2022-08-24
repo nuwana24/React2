@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "../../css/contact-form.scss";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import api from "../../api/index";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../../api/index";
 
 type Props = {
   // contactHandler: (contact: object) => void;
@@ -25,58 +25,67 @@ interface State {
   marketingPref: string;
 }
 
+type Form = {
+  title: string;
+  firstName: string;
+  lastName: string;
+  altEmail: string;
+  mobileNumber: string;
+  email: string;
+  password: string;
+  password2: string;
+  marketingPref: string;
+};
+
+const int = {
+  title: "",
+  firstName: "",
+  lastName: "",
+  altEmail: "",
+  mobileNumber: "",
+  email: "",
+  password: "",
+  password2: "",
+  marketingPref: "Yes",
+};
+
 const ContactForm = (props: Props) => {
-  const [contactList, setContactList] = useState<State[]>([]);
+  const [contactList, setContactList] = useState<any>([]);
   const [contacts, setContacts] = useState<State[]>([]);
 
+  const [formData, setFormData] = useState<Form>(int);
 
-  const id = uuidv4()
-  // const [title, setTitle] = useState('')
-  // const [firstName, setFirstName] = useState('')
-  // const [lastName, setLastName] = useState('')
-  // const [altEmail, setAltEmail] = useState('')
-  // const [mobileNumber, setMobileNumber] = useState('')
-  // const [email, setEmail] = useState('')
-  // const [password, setPassword] = useState('')
-  // const [password2, setPassword2] = useState('')
-  // const [marketingPref, setMarketingPref] = useState('')
+  const onChangeHandler = (e: any) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
+  // const postData = async (contact: any) => {
+  //   setContactList(contactList.concat(contact));
+  //   console.log(contact);
+  //   const request = contact;
 
-  const postData = async (contact: any) => {
-    setContactList(contactList.concat(contact));
-    console.log(contact);
-    const request = contact;
+  //   const response = await api
+  //     .post("/contact", request)
+  //     .then((res: any) => {
+  //       setContactList([...contactList, res.data]);
+  //       setContacts([...contactList, res.data]);
+  //     })
+  //     .catch((error: any) => {
+  //       console.log(error);
+  //     });
+  //   return response;
+  // };
 
-    const response = await api
-      .post("/contact", request)
-      .then((res: any) => {
-        setContactList([...contactList, res.data]);
-        setContacts([...contactList, res.data]);
-      })
-      .catch((error: any) => {
-        console.log(error);
-      });
-    return response;
-  };
+  const postData = (e: React.SyntheticEvent) =>{
+    e.preventDefault();
+    axios.post("/contact", { id: uuidv4(), ...formData })
+    .then((res: any) => {
+      setContactList([...contactList, res.data]);
+      setContacts([...contactList, res.data]);
+    }).catch((error: any) => {
+      console.log(error);
+    });
+  }
 
-
-  // const postData = () =>{
-  //   axios.post("/contact", {
-  //     id,
-  //     title,
-  //     firstName,
-  //     lastName,
-  //     altEmail,
-  //     mobileNumber,
-  //     email,
-  //     password,
-  //     password2,
-  //     marketingPref
-  //   }).catch((error: any) => {
-  //     console.log(error);
-  //   });
-
-  // }
   return (
     <>
       <body>
@@ -100,7 +109,12 @@ const ContactForm = (props: Props) => {
               <label>Title:</label>
               <br />
               {/* <input type="text" id="fname" name="fname" /> */}
-              <select id="title" name="title" onChange={(e) => setContactList(e.target.value)}>
+              <select
+                id="title"
+                name="title"
+                value={formData.title}
+                onChange={onChangeHandler}
+              >
                 <option value="Mr">Mr</option>
                 <option value="Miss">Miss</option>
                 <option value="Mrs">Mrs</option>
@@ -110,22 +124,46 @@ const ContactForm = (props: Props) => {
             <div className="form-row">
               <label>First Name:</label>
               <br />
-              <input type="text" id="firstName" name="firstName" onChange={(e) => setFirstName(e.target.value )}/>
+              <input
+                type="text"
+                id="firstName"
+                name="firstName"
+                value={formData.firstName}
+                onChange={onChangeHandler}
+              />
             </div>
             <div className="form-row">
               <label>Last Name:</label>
               <br />
-              <input type="text" id="lastName" name="lastName" onChange={(e) => setLastName(e.target.value )}/>
+              <input
+                type="text"
+                id="lastName"
+                name="lastName"
+                value={formData.lastName}
+                onChange={onChangeHandler}
+              />
             </div>
             <div className="form-row">
               <label>Mobile Number:</label>
               <br />
-              <input type="text" id="mobileNumber" name="mobileNumber" onChange={(e) => setMobileNumber(e.target.value )}/>
+              <input
+                type="text"
+                id="mobileNumber"
+                name="mobileNumber"
+                value={formData.mobileNumber}
+                onChange={onChangeHandler}
+              />
             </div>
             <div className="form-row">
               <label>Alternative Email(Optional):</label>
               <br />
-              <input type="text" id="altEmail" name="altEmail" onChange={(e) => setAltEmail(e.target.value )}/>
+              <input
+                type="text"
+                id="altEmail"
+                name="altEmail"
+                value={formData.altEmail}
+                onChange={onChangeHandler}
+              />
             </div>
 
             <h2 className="form-heading">Please set you login details</h2>
@@ -133,17 +171,35 @@ const ContactForm = (props: Props) => {
             <div className="form-row">
               <label>Username / Email:</label>
               <br />
-              <input type="text" id="email" name="email" onChange={(e) => setEmail(e.target.value )}/>
+              <input
+                type="text"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={onChangeHandler}
+              />
             </div>
             <div className="form-row">
               <label>Password:</label>
               <br />
-              <input type="password" id="password" name="password" onChange={(e) => setPassword(e.target.value )}/>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={onChangeHandler}
+              />
             </div>
             <div className="form-row">
               <label>Confirm Password:</label>
               <br />
-              <input type="password" id="password2" name="password2" onChange={(e) => setPassword2(e.target.value )}/>
+              <input
+                type="password"
+                id="password2"
+                name="password2"
+                value={formData.password2}
+                onChange={onChangeHandler}
+              />
             </div>
 
             <h2 className="form-heading">Matching Preferences</h2>
@@ -153,8 +209,8 @@ const ContactForm = (props: Props) => {
                 type="radio"
                 id="marketingPref"
                 name="marketingPref"
-                value="Yes"
-                onChange={(e) => setMarketingPref(e.target.value )}
+                value={formData.marketingPref}
+                onChange={onChangeHandler}
               />
               <label>Yes</label>
 
@@ -169,7 +225,9 @@ const ContactForm = (props: Props) => {
             </div>
             <div>
               <button>Cancel</button>
-              <button  onClick={postData} type="submit">Submit</button>
+              <button onClick={postData} type="submit">
+                Submit
+              </button>
             </div>
           </form>
         </div>
